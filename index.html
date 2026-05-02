@@ -172,113 +172,373 @@
       position: relative;
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
       overflow: hidden;
+      padding-bottom: 80px;
     }
+
+    /* Layered background */
     .hero-bg {
       position: absolute;
       inset: 0;
-      background:
-        linear-gradient(160deg, rgba(18,78,90,0.88) 0%, rgba(18,78,90,0.55) 50%, rgba(18,78,90,0.82) 100%),
-        url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1800&q=80') center/cover no-repeat;
-      transform: scale(1.05);
-      animation: heroZoom 12s ease-in-out infinite alternate;
+      background: url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1920&q=85') center/cover no-repeat;
+      transform: scale(1.06);
+      animation: heroZoom 16s ease-in-out infinite alternate;
     }
-    @keyframes heroZoom {
-      from { transform: scale(1.05); }
-      to   { transform: scale(1.0); }
-    }
-    /* Floating particles */
-    .particles {
+    .hero-bg::after {
+      content: '';
       position: absolute;
       inset: 0;
-      pointer-events: none;
-      overflow: hidden;
+      background:
+        linear-gradient(180deg,
+          rgba(10,30,40,0.75) 0%,
+          rgba(10,30,40,0.45) 40%,
+          rgba(10,30,40,0.70) 75%,
+          rgba(10,30,40,0.90) 100%);
     }
+    @keyframes heroZoom {
+      from { transform: scale(1.06); }
+      to   { transform: scale(1.0); }
+    }
+
+    /* Particles */
+    .particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
     .particle {
       position: absolute;
       border-radius: 50%;
-      background: rgba(245, 168, 32, 0.18);
-      animation: float linear infinite;
+      background: rgba(245, 168, 32, 0.15);
+      animation: floatUp linear infinite;
+    }
+    @keyframes floatUp {
+      from { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+      8%   { opacity: 1; }
+      92%  { opacity: 1; }
+      to   { transform: translateY(-10vh) rotate(540deg); opacity: 0; }
     }
 
-    @keyframes float {
-      from { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-      10%  { opacity: 1; }
-      90%  { opacity: 1; }
-      to   { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+    /* Animated flight path line */
+    .hero-flight-path {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 1;
     }
 
+    /* Hero text block */
     .hero-content {
       position: relative;
-      z-index: 2;
-      max-width: 760px;
+      z-index: 3;
+      text-align: center;
+      max-width: 820px;
+      padding: 0 24px;
+      margin-top: 72px;
     }
+
     .hero-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(245, 168, 32, 0.18);
-      border: 1px solid rgba(245, 168, 32, 0.4);
-      backdrop-filter: blur(8px);
+      background: rgba(245, 168, 32, 0.15);
+      border: 1px solid rgba(245, 168, 32, 0.45);
+      backdrop-filter: blur(10px);
       color: var(--gold-light);
-      padding: 8px 18px;
+      padding: 7px 18px;
       border-radius: 50px;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 600;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      margin-bottom: 28px;
+      margin-bottom: 26px;
+      animation: fadeDown 0.8s ease both;
     }
-    .hero-badge::before {
-      content: '';
+    .hero-badge .live-dot {
       width: 6px; height: 6px;
       background: var(--gold);
       border-radius: 50%;
       animation: pulse 2s infinite;
     }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50%       { opacity: 0.5; transform: scale(1.5); }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50%       { transform: scale(1.6); opacity: 0.5; }
+    }
+
     .hero h1 {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-size: clamp(2.6rem, 5.5vw, 4.8rem);
       font-weight: 700;
       color: var(--white);
       line-height: 1.1;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
+      animation: fadeUp 0.9s 0.15s ease both;
     }
-    .hero h1 em {
-      font-style: normal;
+    .hero h1 .word-rotate {
       color: var(--gold);
+      display: inline-block;
+      min-width: 220px;
       position: relative;
     }
-    .hero h1 em::after {
-      content: '';
+    .hero h1 .word-rotate span {
       position: absolute;
-      bottom: -4px; left: 0; right: 0;
-      height: 3px;
-      background: var(--gold);
-      border-radius: 2px;
-      opacity: 0.5;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      opacity: 0;
+      animation: none;
     }
-    .hero p {
-      font-size: 1.15rem;
-      color: rgba(255,255,255,0.82);
-      line-height: 1.75;
-      max-width: 560px;
-      margin-bottom: 40px;
+    .hero h1 .word-rotate span.active {
+      opacity: 1;
+      animation: wordIn 0.5s ease forwards;
     }
-    .hero-actions {
+    .hero h1 .word-rotate span.out {
+      animation: wordOut 0.4s ease forwards;
+    }
+    @keyframes wordIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(18px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    @keyframes wordOut {
+      from { opacity: 1; transform: translateX(-50%) translateY(0); }
+      to   { opacity: 0; transform: translateX(-50%) translateY(-18px); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.8;
+      max-width: 520px;
+      margin: 0 auto 36px;
+      animation: fadeUp 0.9s 0.3s ease both;
+    }
+
+    /* ─── FLIGHT SEARCH ENGINE ───────────────────────────── */
+    .search-engine {
+      position: relative;
+      z-index: 4;
+      width: 100%;
+      max-width: 1000px;
+      padding: 0 24px;
+      margin-top: 32px;
+      animation: fadeUp 1s 0.45s ease both;
+    }
+    .search-card {
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-radius: 24px;
+      padding: 28px 32px 32px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08) inset;
+    }
+
+    /* Trip type tabs */
+    .trip-tabs {
       display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 22px;
     }
+    .trip-tab {
+      padding: 7px 20px;
+      border-radius: 50px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.6);
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.25s;
+      background: none;
+      font-family: 'Inter', sans-serif;
+    }
+    .trip-tab.active {
+      background: var(--gold);
+      color: var(--teal-dark);
+      border-color: var(--gold);
+    }
+    .trip-tab:not(.active):hover {
+      border-color: rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.9);
+    }
+
+    /* Search fields row */
+    .search-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr 160px 140px;
+      gap: 10px;
+      align-items: end;
+    }
+    .search-fields.roundtrip {
+      grid-template-columns: 1fr 1fr 140px 140px 120px;
+    }
+
+    .sf-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      position: relative;
+    }
+    .sf-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      padding-left: 2px;
+    }
+    .sf-input-wrap {
+      position: relative;
+    }
+    .sf-icon {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .sf-input {
+      width: 100%;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      padding: 13px 14px 13px 38px;
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      outline: none;
+      transition: border-color 0.25s, background 0.25s;
+      cursor: pointer;
+    }
+    .sf-input::placeholder { color: rgba(255,255,255,0.4); font-weight: 400; }
+    .sf-input:focus {
+      border-color: var(--gold);
+      background: rgba(255,255,255,0.16);
+    }
+    .sf-input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1) opacity(0.5);
+      cursor: pointer;
+    }
+    select.sf-input { -webkit-appearance: none; appearance: none; }
+    select.sf-input option { background: #0f3540; color: white; }
+
+    /* Airport dropdown */
+    .airport-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0; right: 0;
+      background: #0D3D4A;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 14px;
+      max-height: 260px;
+      overflow-y: auto;
+      z-index: 100;
+      display: none;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+    }
+    .airport-dropdown.open { display: block; }
+    .airport-dropdown::-webkit-scrollbar { width: 4px; }
+    .airport-dropdown::-webkit-scrollbar-track { background: transparent; }
+    .airport-dropdown::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+    .airport-item {
+      padding: 11px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: background 0.15s;
+    }
+    .airport-item:hover, .airport-item.focused { background: rgba(245,168,32,0.12); }
+    .airport-iata {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--gold);
+      min-width: 36px;
+    }
+    .airport-name {
+      font-size: 0.83rem;
+      color: rgba(255,255,255,0.85);
+    }
+    .airport-country {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.45);
+      margin-left: auto;
+    }
+    .airport-no-results {
+      padding: 16px;
+      text-align: center;
+      color: rgba(255,255,255,0.4);
+      font-size: 0.85rem;
+    }
+
+    /* Swap button */
+    .swap-btn {
+      position: absolute;
+      right: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px; height: 36px;
+      background: var(--gold);
+      border: 3px solid rgba(255,255,255,0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 5;
+      font-size: 0.85rem;
+      transition: all 0.25s;
+      color: var(--teal-dark);
+    }
+    .swap-btn:hover { background: var(--gold-light); transform: translateY(-50%) rotate(180deg); }
+
+    /* Search button */
+    .search-btn {
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+      color: var(--teal-dark);
+      border: none;
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.25s;
+      box-shadow: 0 8px 24px rgba(245,168,32,0.35);
+      white-space: nowrap;
+    }
+    .search-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(245,168,32,0.5);
+    }
+
+    /* Return date field (hidden when one-way) */
+    .return-field { display: none; }
+    .roundtrip-active .return-field { display: flex; }
+
+    /* Passengers field */
+    .pax-display {
+      cursor: pointer;
+    }
+
     /* Scroll indicator */
     .scroll-hint {
       position: absolute;
-      bottom: 40px;
+      bottom: 28px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 2;
@@ -286,29 +546,29 @@
       flex-direction: column;
       align-items: center;
       gap: 8px;
-      color: rgba(255,255,255,0.55);
-      font-size: 0.72rem;
+      color: rgba(255,255,255,0.4);
+      font-size: 0.68rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
     }
     .scroll-hint .mouse {
-      width: 24px; height: 38px;
-      border: 2px solid rgba(255,255,255,0.4);
-      border-radius: 12px;
+      width: 22px; height: 34px;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      border-radius: 11px;
       position: relative;
     }
     .scroll-hint .mouse::after {
       content: '';
       position: absolute;
-      top: 6px; left: 50%; transform: translateX(-50%);
-      width: 4px; height: 8px;
+      top: 5px; left: 50%; transform: translateX(-50%);
+      width: 3px; height: 7px;
       background: var(--gold);
       border-radius: 2px;
       animation: scrollDown 1.6s ease-in-out infinite;
     }
     @keyframes scrollDown {
-      0%, 100% { top: 6px; opacity: 1; }
-      80%       { top: 18px; opacity: 0; }
+      0%, 100% { top: 5px; opacity: 1; }
+      80%       { top: 16px; opacity: 0; }
     }
 
     /* ─── STATS BAR ─────────────────────────────────────── */
@@ -893,20 +1153,129 @@
   <section class="hero" id="hero">
     <div class="hero-bg"></div>
     <div class="particles" id="particles"></div>
-    <div class="container">
-      <div class="hero-content">
-        <div class="hero-badge">✈ From the City of the Phoenicians</div>
-        <h1>Where Every Journey<br/>Becomes a <em>Legend</em></h1>
-        <p>Born in Sour — the ancient Phoenician port that once connected the world — we carry that same spirit of exploration into every voyage we craft for you.</p>
-        <div class="hero-actions">
-          <a href="#destinations" class="btn btn-primary">
-            <span>Explore Destinations</span>
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
-          <a href="#contact" class="btn btn-outline">Plan My Trip</a>
-        </div>
+
+    <!-- Animated SVG flight path -->
+    <svg class="hero-flight-path" viewBox="0 0 1440 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <path d="M-100,480 Q360,80 900,300 Q1200,440 1540,120" fill="none" stroke="rgba(245,168,32,0.12)" stroke-width="1.5" stroke-dasharray="8 14"/>
+      <path d="M-80,300 Q400,500 800,200 Q1100,50 1540,380" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1" stroke-dasharray="5 18"/>
+      <!-- Animated plane dot -->
+      <circle r="4" fill="#F5A820" opacity="0.8">
+        <animateMotion dur="12s" repeatCount="indefinite" rotate="auto">
+          <mpath href="#flightPath1"/>
+        </animateMotion>
+      </circle>
+      <path id="flightPath1" d="M-100,480 Q360,80 900,300 Q1200,440 1540,120" fill="none"/>
+    </svg>
+
+    <!-- Hero text -->
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="live-dot"></span>
+        From the City of the Phoenicians · Sour, Lebanon
       </div>
+      <h1>
+        Fly to<br/>
+        <span class="word-rotate" id="wordRotate">
+          <span class="active">Paris</span>
+          <span>Dubai</span>
+          <span>Santorini</span>
+          <span>Bangkok</span>
+          <span>New York</span>
+          <span>Maldives</span>
+          <span>Istanbul</span>
+          <span>Tokyo</span>
+        </span>
+      </h1>
+      <p class="hero-sub">Book your flight, hotel, or full package from Sour. We handle everything — you just show up.</p>
     </div>
+
+    <!-- ─── FLIGHT SEARCH ENGINE ─── -->
+    <div class="search-engine" id="searchEngine">
+      <div class="search-card" id="searchCard">
+
+        <!-- Trip type tabs -->
+        <div class="trip-tabs">
+          <button class="trip-tab active" data-type="oneway">One-Way</button>
+          <button class="trip-tab" data-type="roundtrip">Round-Trip</button>
+          <button class="trip-tab" data-type="multicity">Multi-City</button>
+        </div>
+
+        <!-- Fields -->
+        <div class="search-fields" id="searchFields">
+
+          <!-- Origin -->
+          <div class="sf-group" style="position:relative;">
+            <div class="sf-label">From</div>
+            <div class="sf-input-wrap">
+              <span class="sf-icon">🛫</span>
+              <input type="text" class="sf-input airport-input" id="originInput" placeholder="City or airport..." autocomplete="off" />
+            </div>
+            <div class="airport-dropdown" id="originDropdown"></div>
+            <!-- Swap -->
+            <button class="swap-btn" id="swapBtn" title="Swap airports">⇄</button>
+          </div>
+
+          <!-- Destination -->
+          <div class="sf-group">
+            <div class="sf-label">To</div>
+            <div class="sf-input-wrap">
+              <span class="sf-icon">🛬</span>
+              <input type="text" class="sf-input airport-input" id="destInput" placeholder="City or airport..." autocomplete="off" />
+            </div>
+            <div class="airport-dropdown" id="destDropdown"></div>
+          </div>
+
+          <!-- Departure -->
+          <div class="sf-group">
+            <div class="sf-label">Departure</div>
+            <div class="sf-input-wrap">
+              <span class="sf-icon">📅</span>
+              <input type="date" class="sf-input" id="depDate" style="padding-left:38px;" />
+            </div>
+          </div>
+
+          <!-- Return (hidden when one-way) -->
+          <div class="sf-group return-field" id="returnField">
+            <div class="sf-label">Return</div>
+            <div class="sf-input-wrap">
+              <span class="sf-icon">📅</span>
+              <input type="date" class="sf-input" id="retDate" style="padding-left:38px;" />
+            </div>
+          </div>
+
+          <!-- Passengers -->
+          <div class="sf-group">
+            <div class="sf-label">Passengers & Class</div>
+            <div class="sf-input-wrap">
+              <span class="sf-icon">👤</span>
+              <select class="sf-input" id="paxClass">
+                <option value="1 passenger, Economy">1 · Economy</option>
+                <option value="2 passengers, Economy">2 · Economy</option>
+                <option value="3 passengers, Economy">3 · Economy</option>
+                <option value="4 passengers, Economy">4 · Economy</option>
+                <option value="5+ passengers, Economy">5+ · Economy</option>
+                <option value="1 passenger, Business">1 · Business</option>
+                <option value="2 passengers, Business">2 · Business</option>
+                <option value="3 passengers, Business">3 · Business</option>
+                <option value="1 passenger, First Class">1 · First Class</option>
+                <option value="2 passengers, First Class">2 · First Class</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Search button -->
+          <div class="sf-group">
+            <div class="sf-label">&nbsp;</div>
+            <button class="search-btn" id="searchBtn">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              Search on WhatsApp
+            </button>
+          </div>
+
+        </div><!-- /search-fields -->
+      </div><!-- /search-card -->
+    </div><!-- /search-engine -->
+
     <div class="scroll-hint">
       <div class="mouse"></div>
       <span>Scroll</span>
@@ -1327,30 +1696,337 @@
 
   <!-- ─── JS ───────────────────────────────────────────── -->
   <script>
-    // Navbar scroll effect
+    /* ══════════════════════════════════════════════════════
+       AIRPORT DATABASE (IATA · City · Country)
+    ══════════════════════════════════════════════════════ */
+    const AIRPORTS = [
+      // Lebanon & Middle East
+      {c:'BEY',n:'Beirut Rafic Hariri',city:'Beirut',cc:'Lebanon'},
+      {c:'DXB',n:'Dubai International',city:'Dubai',cc:'UAE'},
+      {c:'AUH',n:'Abu Dhabi International',city:'Abu Dhabi',cc:'UAE'},
+      {c:'DOH',n:'Hamad International',city:'Doha',cc:'Qatar'},
+      {c:'KWI',n:'Kuwait International',city:'Kuwait City',cc:'Kuwait'},
+      {c:'AMM',n:'Queen Alia International',city:'Amman',cc:'Jordan'},
+      {c:'BAH',n:'Bahrain International',city:'Manama',cc:'Bahrain'},
+      {c:'MCT',n:'Muscat International',city:'Muscat',cc:'Oman'},
+      {c:'RUH',n:'King Khalid International',city:'Riyadh',cc:'Saudi Arabia'},
+      {c:'JED',n:'King Abdulaziz International',city:'Jeddah',cc:'Saudi Arabia'},
+      {c:'MED',n:'Prince Mohammad bin Abdulaziz',city:'Medina',cc:'Saudi Arabia'},
+      {c:'TLV',n:'Ben Gurion International',city:'Tel Aviv',cc:'Israel'},
+      {c:'BGW',n:'Baghdad International',city:'Baghdad',cc:'Iraq'},
+      {c:'EBL',n:'Erbil International',city:'Erbil',cc:'Iraq'},
+      {c:'DAM',n:'Damascus International',city:'Damascus',cc:'Syria'},
+      {c:'SHJ',n:'Sharjah International',city:'Sharjah',cc:'UAE'},
+      {c:'RKT',n:'Ras Al Khaimah International',city:'Ras Al Khaimah',cc:'UAE'},
+      // Egypt & North Africa
+      {c:'CAI',n:'Cairo International',city:'Cairo',cc:'Egypt'},
+      {c:'HRG',n:'Hurghada International',city:'Hurghada',cc:'Egypt'},
+      {c:'SSH',n:'Sharm el-Sheikh International',city:'Sharm El Sheikh',cc:'Egypt'},
+      {c:'LXR',n:'Luxor International',city:'Luxor',cc:'Egypt'},
+      {c:'ALY',n:'El Nouzha Airport',city:'Alexandria',cc:'Egypt'},
+      {c:'CMN',n:'Mohammed V International',city:'Casablanca',cc:'Morocco'},
+      {c:'RAK',n:'Marrakech Menara',city:'Marrakech',cc:'Morocco'},
+      {c:'FEZ',n:'Fès–Saïss Airport',city:'Fez',cc:'Morocco'},
+      {c:'TUN',n:'Tunis-Carthage International',city:'Tunis',cc:'Tunisia'},
+      {c:'ALG',n:'Houari Boumediene',city:'Algiers',cc:'Algeria'},
+      {c:'TRI',n:'Tripoli International',city:'Tripoli',cc:'Libya'},
+      // Europe
+      {c:'LHR',n:'Heathrow',city:'London',cc:'UK'},
+      {c:'LGW',n:'Gatwick',city:'London',cc:'UK'},
+      {c:'STN',n:'Stansted',city:'London',cc:'UK'},
+      {c:'MAN',n:'Manchester Airport',city:'Manchester',cc:'UK'},
+      {c:'EDI',n:'Edinburgh Airport',city:'Edinburgh',cc:'UK'},
+      {c:'CDG',n:'Charles de Gaulle',city:'Paris',cc:'France'},
+      {c:'ORY',n:'Paris Orly',city:'Paris',cc:'France'},
+      {c:'NCE',n:'Nice Côte d\'Azur',city:'Nice',cc:'France'},
+      {c:'MRS',n:'Marseille Provence',city:'Marseille',cc:'France'},
+      {c:'LYS',n:'Lyon Saint-Exupéry',city:'Lyon',cc:'France'},
+      {c:'FRA',n:'Frankfurt Airport',city:'Frankfurt',cc:'Germany'},
+      {c:'MUC',n:'Munich Airport',city:'Munich',cc:'Germany'},
+      {c:'BER',n:'Berlin Brandenburg',city:'Berlin',cc:'Germany'},
+      {c:'HAM',n:'Hamburg Airport',city:'Hamburg',cc:'Germany'},
+      {c:'DUS',n:'Düsseldorf Airport',city:'Düsseldorf',cc:'Germany'},
+      {c:'AMS',n:'Amsterdam Schiphol',city:'Amsterdam',cc:'Netherlands'},
+      {c:'BRU',n:'Brussels Airport',city:'Brussels',cc:'Belgium'},
+      {c:'ZRH',n:'Zurich Airport',city:'Zurich',cc:'Switzerland'},
+      {c:'GVA',n:'Geneva Airport',city:'Geneva',cc:'Switzerland'},
+      {c:'VIE',n:'Vienna International',city:'Vienna',cc:'Austria'},
+      {c:'FCO',n:'Leonardo da Vinci (Fiumicino)',city:'Rome',cc:'Italy'},
+      {c:'MXP',n:'Milano Malpensa',city:'Milan',cc:'Italy'},
+      {c:'LIN',n:'Milano Linate',city:'Milan',cc:'Italy'},
+      {c:'VCE',n:'Venice Marco Polo',city:'Venice',cc:'Italy'},
+      {c:'NAP',n:'Naples International',city:'Naples',cc:'Italy'},
+      {c:'MAD',n:'Adolfo Suárez Madrid–Barajas',city:'Madrid',cc:'Spain'},
+      {c:'BCN',n:'Barcelona–El Prat',city:'Barcelona',cc:'Spain'},
+      {c:'AGP',n:'Málaga–Costa del Sol',city:'Malaga',cc:'Spain'},
+      {c:'PMI',n:'Palma de Mallorca',city:'Palma',cc:'Spain'},
+      {c:'LIS',n:'Lisbon Airport',city:'Lisbon',cc:'Portugal'},
+      {c:'OPO',n:'Francisco Sá Carneiro',city:'Porto',cc:'Portugal'},
+      {c:'ATH',n:'Athens International',city:'Athens',cc:'Greece'},
+      {c:'HER',n:'Heraklion International',city:'Crete',cc:'Greece'},
+      {c:'SKG',n:'Thessaloniki Airport',city:'Thessaloniki',cc:'Greece'},
+      {c:'CFU',n:'Corfu International',city:'Corfu',cc:'Greece'},
+      {c:'JTR',n:'Santorini Airport',city:'Santorini',cc:'Greece'},
+      {c:'RHO',n:'Rhodes International',city:'Rhodes',cc:'Greece'},
+      {c:'IST',n:'Istanbul Airport',city:'Istanbul',cc:'Turkey'},
+      {c:'SAW',n:'Sabiha Gökçen International',city:'Istanbul',cc:'Turkey'},
+      {c:'AYT',n:'Antalya Airport',city:'Antalya',cc:'Turkey'},
+      {c:'ADB',n:'Adnan Menderes Airport',city:'Izmir',cc:'Turkey'},
+      {c:'ESB',n:'Ankara Esenboğa',city:'Ankara',cc:'Turkey'},
+      {c:'CPH',n:'Copenhagen Airport',city:'Copenhagen',cc:'Denmark'},
+      {c:'ARN',n:'Stockholm Arlanda',city:'Stockholm',cc:'Sweden'},
+      {c:'OSL',n:'Oslo Gardermoen',city:'Oslo',cc:'Norway'},
+      {c:'HEL',n:'Helsinki-Vantaa',city:'Helsinki',cc:'Finland'},
+      {c:'WAW',n:'Warsaw Chopin',city:'Warsaw',cc:'Poland'},
+      {c:'PRG',n:'Václav Havel Prague',city:'Prague',cc:'Czech Republic'},
+      {c:'BUD',n:'Budapest Ferenc Liszt',city:'Budapest',cc:'Hungary'},
+      {c:'OTP',n:'Henri Coandă International',city:'Bucharest',cc:'Romania'},
+      {c:'SOF',n:'Sofia Airport',city:'Sofia',cc:'Bulgaria'},
+      {c:'DUB',n:'Dublin Airport',city:'Dublin',cc:'Ireland'},
+      {c:'LUX',n:'Luxembourg Airport',city:'Luxembourg',cc:'Luxembourg'},
+      {c:'MSQ',n:'Minsk International',city:'Minsk',cc:'Belarus'},
+      {c:'SVO',n:'Sheremetyevo International',city:'Moscow',cc:'Russia'},
+      {c:'DME',n:'Domodedovo International',city:'Moscow',cc:'Russia'},
+      // Asia
+      {c:'BKK',n:'Suvarnabhumi Airport',city:'Bangkok',cc:'Thailand'},
+      {c:'DMK',n:'Don Mueang International',city:'Bangkok',cc:'Thailand'},
+      {c:'HKT',n:'Phuket International',city:'Phuket',cc:'Thailand'},
+      {c:'CNX',n:'Chiang Mai International',city:'Chiang Mai',cc:'Thailand'},
+      {c:'SIN',n:'Singapore Changi',city:'Singapore',cc:'Singapore'},
+      {c:'KUL',n:'Kuala Lumpur International',city:'Kuala Lumpur',cc:'Malaysia'},
+      {c:'CGK',n:'Soekarno-Hatta International',city:'Jakarta',cc:'Indonesia'},
+      {c:'DPS',n:'Ngurah Rai (Bali)',city:'Bali',cc:'Indonesia'},
+      {c:'HKG',n:'Hong Kong International',city:'Hong Kong',cc:'China'},
+      {c:'PEK',n:'Beijing Capital International',city:'Beijing',cc:'China'},
+      {c:'PKX',n:'Beijing Daxing International',city:'Beijing',cc:'China'},
+      {c:'PVG',n:'Shanghai Pudong',city:'Shanghai',cc:'China'},
+      {c:'SHA',n:'Shanghai Hongqiao',city:'Shanghai',cc:'China'},
+      {c:'CAN',n:'Guangzhou Baiyun',city:'Guangzhou',cc:'China'},
+      {c:'NRT',n:'Narita International',city:'Tokyo',cc:'Japan'},
+      {c:'HND',n:'Haneda Airport',city:'Tokyo',cc:'Japan'},
+      {c:'KIX',n:'Kansai International',city:'Osaka',cc:'Japan'},
+      {c:'ICN',n:'Incheon International',city:'Seoul',cc:'South Korea'},
+      {c:'GMP',n:'Gimpo International',city:'Seoul',cc:'South Korea'},
+      {c:'MNL',n:'Ninoy Aquino International',city:'Manila',cc:'Philippines'},
+      {c:'CEB',n:'Mactan–Cebu International',city:'Cebu',cc:'Philippines'},
+      {c:'SGN',n:'Tan Son Nhat International',city:'Ho Chi Minh City',cc:'Vietnam'},
+      {c:'HAN',n:'Noi Bai International',city:'Hanoi',cc:'Vietnam'},
+      {c:'DAD',n:'Da Nang International',city:'Da Nang',cc:'Vietnam'},
+      {c:'DEL',n:'Indira Gandhi International',city:'New Delhi',cc:'India'},
+      {c:'BOM',n:'Chhatrapati Shivaji International',city:'Mumbai',cc:'India'},
+      {c:'BLR',n:'Kempegowda International',city:'Bangalore',cc:'India'},
+      {c:'MAA',n:'Chennai International',city:'Chennai',cc:'India'},
+      {c:'CCU',n:'Netaji Subhas Chandra Bose',city:'Kolkata',cc:'India'},
+      {c:'COK',n:'Cochin International',city:'Kochi',cc:'India'},
+      {c:'TRV',n:'Trivandrum International',city:'Thiruvananthapuram',cc:'India'},
+      {c:'CMB',n:'Bandaranaike International',city:'Colombo',cc:'Sri Lanka'},
+      {c:'KTM',n:'Tribhuvan International',city:'Kathmandu',cc:'Nepal'},
+      {c:'DAC',n:'Hazrat Shahjalal International',city:'Dhaka',cc:'Bangladesh'},
+      {c:'KHI',n:'Jinnah International',city:'Karachi',cc:'Pakistan'},
+      {c:'LHE',n:'Allama Iqbal International',city:'Lahore',cc:'Pakistan'},
+      {c:'ISB',n:'New Islamabad International',city:'Islamabad',cc:'Pakistan'},
+      {c:'MLE',n:'Velana International',city:'Malé',cc:'Maldives'},
+      // Americas
+      {c:'JFK',n:'John F. Kennedy International',city:'New York',cc:'USA'},
+      {c:'LGA',n:'LaGuardia Airport',city:'New York',cc:'USA'},
+      {c:'EWR',n:'Newark Liberty International',city:'New York',cc:'USA'},
+      {c:'LAX',n:'Los Angeles International',city:'Los Angeles',cc:'USA'},
+      {c:'ORD',n:'O\'Hare International',city:'Chicago',cc:'USA'},
+      {c:'MDW',n:'Chicago Midway',city:'Chicago',cc:'USA'},
+      {c:'MIA',n:'Miami International',city:'Miami',cc:'USA'},
+      {c:'FLL',n:'Fort Lauderdale-Hollywood',city:'Fort Lauderdale',cc:'USA'},
+      {c:'ATL',n:'Hartsfield-Jackson Atlanta',city:'Atlanta',cc:'USA'},
+      {c:'DFW',n:'Dallas/Fort Worth International',city:'Dallas',cc:'USA'},
+      {c:'IAH',n:'George Bush Intercontinental',city:'Houston',cc:'USA'},
+      {c:'SFO',n:'San Francisco International',city:'San Francisco',cc:'USA'},
+      {c:'BOS',n:'Logan International',city:'Boston',cc:'USA'},
+      {c:'IAD',n:'Washington Dulles',city:'Washington D.C.',cc:'USA'},
+      {c:'DCA',n:'Ronald Reagan Washington',city:'Washington D.C.',cc:'USA'},
+      {c:'SEA',n:'Seattle-Tacoma International',city:'Seattle',cc:'USA'},
+      {c:'YYZ',n:'Toronto Pearson International',city:'Toronto',cc:'Canada'},
+      {c:'YVR',n:'Vancouver International',city:'Vancouver',cc:'Canada'},
+      {c:'YUL',n:'Montréal-Trudeau',city:'Montreal',cc:'Canada'},
+      {c:'YYC',n:'Calgary International',city:'Calgary',cc:'Canada'},
+      {c:'GRU',n:'São Paulo-Guarulhos',city:'São Paulo',cc:'Brazil'},
+      {c:'GIG',n:'Rio de Janeiro-Galeão',city:'Rio de Janeiro',cc:'Brazil'},
+      {c:'EZE',n:'Ministro Pistarini (Ezeiza)',city:'Buenos Aires',cc:'Argentina'},
+      {c:'SCL',n:'Arturo Merino Benítez',city:'Santiago',cc:'Chile'},
+      {c:'BOG',n:'El Dorado International',city:'Bogotá',cc:'Colombia'},
+      {c:'LIM',n:'Jorge Chávez International',city:'Lima',cc:'Peru'},
+      {c:'MEX',n:'Benito Juárez International',city:'Mexico City',cc:'Mexico'},
+      {c:'CUN',n:'Cancún International',city:'Cancún',cc:'Mexico'},
+      // Africa
+      {c:'JNB',n:'O.R. Tambo International',city:'Johannesburg',cc:'South Africa'},
+      {c:'CPT',n:'Cape Town International',city:'Cape Town',cc:'South Africa'},
+      {c:'NBO',n:'Jomo Kenyatta International',city:'Nairobi',cc:'Kenya'},
+      {c:'ADD',n:'Bole International',city:'Addis Ababa',cc:'Ethiopia'},
+      {c:'LOS',n:'Murtala Muhammed International',city:'Lagos',cc:'Nigeria'},
+      {c:'ABV',n:'Nnamdi Azikiwe International',city:'Abuja',cc:'Nigeria'},
+      {c:'ACC',n:'Kotoka International',city:'Accra',cc:'Ghana'},
+      {c:'DAR',n:'Julius Nyerere International',city:'Dar es Salaam',cc:'Tanzania'},
+      {c:'MBA',n:'Mombasa Moi International',city:'Mombasa',cc:'Kenya'},
+      {c:'ZNZ',n:'Abeid Amani Karume International',city:'Zanzibar',cc:'Tanzania'},
+      // Oceania
+      {c:'SYD',n:'Sydney Kingsford Smith',city:'Sydney',cc:'Australia'},
+      {c:'MEL',n:'Melbourne Airport',city:'Melbourne',cc:'Australia'},
+      {c:'BNE',n:'Brisbane Airport',city:'Brisbane',cc:'Australia'},
+      {c:'PER',n:'Perth Airport',city:'Perth',cc:'Australia'},
+      {c:'AKL',n:'Auckland Airport',city:'Auckland',cc:'New Zealand'},
+    ];
+
+    /* ══════════════════════════════════════════════════════
+       WORD ROTATOR
+    ══════════════════════════════════════════════════════ */
+    const wordRotate = document.getElementById('wordRotate');
+    if (wordRotate) {
+      const words = wordRotate.querySelectorAll('span');
+      let cur = 0;
+      setInterval(() => {
+        words[cur].className = 'out';
+        setTimeout(() => { words[cur].className = ''; }, 400);
+        cur = (cur + 1) % words.length;
+        words[cur].className = 'active';
+      }, 2400);
+    }
+
+    /* ══════════════════════════════════════════════════════
+       FLIGHT SEARCH ENGINE
+    ══════════════════════════════════════════════════════ */
+    const WHATSAPP_NUMBER = '96171136035';
+
+    // Trip type tabs
+    const tabs = document.querySelectorAll('.trip-tab');
+    const returnField = document.getElementById('returnField');
+    let tripType = 'oneway';
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        tripType = tab.dataset.type;
+        if (tripType === 'roundtrip') {
+          returnField.style.display = 'flex';
+        } else {
+          returnField.style.display = 'none';
+        }
+      });
+    });
+
+    // Airport autocomplete
+    function buildDropdown(dropdown, results, inputEl, hiddenEl) {
+      dropdown.innerHTML = '';
+      if (!results.length) {
+        dropdown.innerHTML = '<div class="airport-no-results">No airports found</div>';
+        dropdown.classList.add('open');
+        return;
+      }
+      results.slice(0, 10).forEach((a, idx) => {
+        const item = document.createElement('div');
+        item.className = 'airport-item';
+        item.innerHTML = `<span class="airport-iata">${a.c}</span><span class="airport-name">${a.city} — ${a.n}</span><span class="airport-country">${a.cc}</span>`;
+        item.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          inputEl.value = `${a.city} (${a.c})`;
+          inputEl.dataset.iata = a.c;
+          inputEl.dataset.city = a.city;
+          dropdown.classList.remove('open');
+        });
+        dropdown.appendChild(item);
+      });
+      dropdown.classList.add('open');
+    }
+
+    function setupAirportInput(inputId, dropdownId) {
+      const input = document.getElementById(inputId);
+      const dropdown = document.getElementById(dropdownId);
+      if (!input || !dropdown) return;
+
+      input.addEventListener('input', () => {
+        const q = input.value.toLowerCase().trim();
+        if (q.length < 1) { dropdown.classList.remove('open'); return; }
+        const results = AIRPORTS.filter(a =>
+          a.c.toLowerCase().includes(q) ||
+          a.n.toLowerCase().includes(q) ||
+          a.city.toLowerCase().includes(q) ||
+          a.cc.toLowerCase().includes(q)
+        );
+        buildDropdown(dropdown, results, input);
+      });
+
+      input.addEventListener('focus', () => {
+        if (input.value.length > 0) input.dispatchEvent(new Event('input'));
+      });
+      input.addEventListener('blur', () => {
+        setTimeout(() => dropdown.classList.remove('open'), 200);
+      });
+    }
+
+    setupAirportInput('originInput', 'originDropdown');
+    setupAirportInput('destInput', 'destDropdown');
+
+    // Swap airports
+    document.getElementById('swapBtn').addEventListener('click', () => {
+      const orig = document.getElementById('originInput');
+      const dest = document.getElementById('destInput');
+      const tmp = { val: orig.value, iata: orig.dataset.iata, city: orig.dataset.city };
+      orig.value = dest.value;
+      orig.dataset.iata = dest.dataset.iata || '';
+      orig.dataset.city = dest.dataset.city || '';
+      dest.value = tmp.val;
+      dest.dataset.iata = tmp.iata || '';
+      dest.dataset.city = tmp.city || '';
+    });
+
+    // Set min date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('depDate').min = today;
+    document.getElementById('retDate').min = today;
+
+    // Search → WhatsApp
+    document.getElementById('searchBtn').addEventListener('click', () => {
+      const origin = document.getElementById('originInput').value.trim();
+      const dest   = document.getElementById('destInput').value.trim();
+      const dep    = document.getElementById('depDate').value;
+      const ret    = document.getElementById('retDate').value;
+      const pax    = document.getElementById('paxClass').value;
+
+      if (!origin || !dest) {
+        alert('Please enter both origin and destination airports.');
+        return;
+      }
+
+      let msg = `✈️ *Flight Request — Ocean Over Seas*\n\n`;
+      msg += `*Trip Type:* ${tripType === 'roundtrip' ? 'Round-Trip' : tripType === 'multicity' ? 'Multi-City' : 'One-Way'}\n`;
+      msg += `*From:* ${origin}\n`;
+      msg += `*To:* ${dest}\n`;
+      msg += `*Departure:* ${dep || 'Flexible'}\n`;
+      if (tripType === 'roundtrip') msg += `*Return:* ${ret || 'Flexible'}\n`;
+      msg += `*Passengers & Class:* ${pax}\n\n`;
+      msg += `Please help me find the best available options and prices. Thank you! 🙏`;
+
+      const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    });
+
+    /* ══════════════════════════════════════════════════════
+       NAV, PARTICLES, SCROLL REVEAL, COUNTERS, FORM
+    ══════════════════════════════════════════════════════ */
+    // Navbar scroll
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
       navbar.classList.toggle('scrolled', window.scrollY > 60);
     }, { passive: true });
 
-    // Floating particles
+    // Particles
     const particlesEl = document.getElementById('particles');
-    for (let i = 0; i < 18; i++) {
+    for (let i = 0; i < 16; i++) {
       const p = document.createElement('div');
       p.className = 'particle';
-      const size = Math.random() * 80 + 20;
-      p.style.cssText = `
-        width: ${size}px;
-        height: ${size}px;
-        left: ${Math.random() * 100}%;
-        animation-duration: ${Math.random() * 20 + 15}s;
-        animation-delay: ${Math.random() * -20}s;
-        opacity: ${Math.random() * 0.3 + 0.05};
-      `;
+      const size = Math.random() * 70 + 15;
+      p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;animation-duration:${Math.random()*22+14}s;animation-delay:${Math.random()*-22}s;`;
       particlesEl.appendChild(p);
     }
 
-    // Reveal on scroll
+    // Scroll reveal
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry, i) => {
@@ -1362,10 +2038,10 @@
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
     reveals.forEach(el => observer.observe(el));
 
-    // Counter animation
+    // Counters
     function animateCounter(el) {
       const target = +el.dataset.count;
-      const suffix = target >= 98 ? '%' : target >= 1000 ? '+' : '+';
+      const suffix = target >= 98 ? '%' : '+';
       let start = 0;
       const step = target / 60;
       const interval = setInterval(() => {
@@ -1378,7 +2054,6 @@
         }
       }, 25);
     }
-
     const statObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -1392,19 +2067,17 @@
     // Hamburger
     const ham = document.getElementById('hamburger');
     const navLinks = document.querySelector('.nav-links');
+    let navOpen = false;
     ham.addEventListener('click', () => {
-      navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-      navLinks.style.flexDirection = 'column';
-      navLinks.style.position = 'absolute';
-      navLinks.style.top = '72px';
-      navLinks.style.left = '0';
-      navLinks.style.right = '0';
-      navLinks.style.background = 'rgba(18,78,90,0.98)';
-      navLinks.style.padding = '24px 32px';
-      navLinks.style.gap = '20px';
+      navOpen = !navOpen;
+      if (navOpen) {
+        navLinks.style.cssText = 'display:flex;flex-direction:column;position:absolute;top:72px;left:0;right:0;background:rgba(10,30,40,0.98);padding:24px 32px;gap:20px;backdrop-filter:blur(16px);';
+      } else {
+        navLinks.style.cssText = 'display:none;';
+      }
     });
 
-    // Form submit
+    // Contact form
     function handleSubmit(e) {
       e.preventDefault();
       const btn = e.target.querySelector('.form-submit');
