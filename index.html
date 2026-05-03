@@ -1559,6 +1559,53 @@
       transform: translateY(-2px);
     }
 
+    /* ─── WHATSAPP FLOAT BUTTON ─────────────────────────── */
+    .wa-float {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      cursor: pointer;
+      filter: drop-shadow(0 8px 24px rgba(37,211,102,0.45));
+      transition: filter 0.3s ease;
+    }
+    .wa-float:hover { filter: drop-shadow(0 12px 32px rgba(37,211,102,0.65)); }
+    .wa-float-label {
+      background: white;
+      color: #075E54;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 10px 16px 10px 18px;
+      border-radius: 50px 0 0 50px;
+      white-space: nowrap;
+      max-width: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-width 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+      box-shadow: -4px 0 12px rgba(0,0,0,0.06);
+    }
+    .wa-float:hover .wa-float-label {
+      max-width: 200px;
+      opacity: 1;
+    }
+    .wa-float-btn {
+      width: 58px; height: 58px;
+      background: #25D366;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      animation: waPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes waPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(37,211,102,0.5); }
+      50%       { box-shadow: 0 0 0 14px rgba(37,211,102,0); }
+    }
+
     /* ─── Responsive ────────────────────────────────────── */
     @media (max-width: 1024px) {
       .services-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1575,6 +1622,39 @@
       .nav-links { display: none; }
       .hamburger { display: flex; }
       .container { padding: 0 20px; }
+
+      /* Flight search – stack to single column */
+      .search-card { padding: 20px 18px 24px; border-radius: 18px; }
+      .trip-tabs { gap: 4px; }
+      .trip-tab { padding: 6px 14px; font-size: 0.78rem; }
+      .search-fields,
+      .search-fields.roundtrip {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+      }
+      /* From/To side by side, rest full-width */
+      .search-fields > .sf-group:nth-child(1) { grid-column: 1; }
+      .search-fields > .sf-group:nth-child(2) { grid-column: 2; }
+      .search-fields > .sf-group:nth-child(3),
+      .search-fields > .sf-group:nth-child(4),
+      .search-fields > .sf-group:nth-child(5),
+      .search-fields > .sf-group:nth-child(6) { grid-column: 1 / -1; }
+      .swap-btn { display: none; }
+      .sf-input { font-size: 0.82rem; padding: 11px 12px 11px 34px; }
+      .search-btn { padding: 13px 16px; font-size: 0.88rem; }
+
+      /* Flight results */
+      .flight-card {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        padding: 16px;
+      }
+      .flight-price-col { flex-direction: row; align-items: center; justify-content: space-between; }
+      .flight-route { flex-wrap: nowrap; }
+      .route-time { font-size: 1.1rem; }
+      .results-sort { display: none; }
+
+      /* Stats, services, sections */
       .stats-bar .container { grid-template-columns: repeat(2, 1fr); }
       .stat-item:nth-child(2) { border-right: none; }
       .services-grid { grid-template-columns: 1fr; }
@@ -1585,6 +1665,19 @@
       .form-row { grid-template-columns: 1fr; }
       .footer-top { grid-template-columns: 1fr; gap: 32px; }
       .why-grid { grid-template-columns: 1fr; }
+
+      /* Float button */
+      .wa-float { bottom: 18px; right: 18px; }
+      .wa-float-btn { width: 52px; height: 52px; }
+    }
+
+    @media (max-width: 480px) {
+      .search-fields,
+      .search-fields.roundtrip { grid-template-columns: 1fr; }
+      .search-fields > .sf-group:nth-child(1),
+      .search-fields > .sf-group:nth-child(2) { grid-column: 1; }
+      .hero h1 { font-size: 2.2rem; }
+      .hero h1 .word-rotate { min-width: 160px; }
     }
   </style>
 </head>
@@ -1593,14 +1686,27 @@
   <!-- ─── NAV ──────────────────────────────────────────── -->
   <nav id="navbar">
     <div class="nav-logo">
-      <!-- SVG recreation of the logo mark -->
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M4 28 Q18 4 32 8" stroke="#F5A820" stroke-width="3" fill="none" stroke-linecap="round"/>
-        <path d="M30 6 L32 8 L29 10" stroke="#F5A820" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Logo mark: golden swoosh + airplane -->
+      <svg width="48" height="38" viewBox="0 0 48 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Golden arc swoosh -->
+        <path d="M6 32 Q14 6 38 4" stroke="#F5A820" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <!-- Airplane body -->
+        <g transform="translate(35,3) rotate(10)">
+          <path d="M0 0 L8 3 L0 6 L1.5 3 Z" fill="#F5A820"/>
+          <!-- Wings -->
+          <path d="M3 2.5 L7 -1 L8 1 L4 3.5 Z" fill="#F5A820" opacity="0.85"/>
+          <path d="M3 3.5 L7 7 L8 5 L4 2.5 Z" fill="#F5A820" opacity="0.85"/>
+          <!-- Tail -->
+          <path d="M0.5 2 L-2 0 L-1 3 Z" fill="#F5A820" opacity="0.7"/>
+        </g>
       </svg>
-      <span style="font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:white;">
-        Ocean <span style="color:#F5A820;">Over</span> Seas
-      </span>
+      <!-- Wordmark -->
+      <div style="display:flex;flex-direction:column;line-height:1.1;">
+        <span style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:white;letter-spacing:0.01em;">
+          Ocean <span style="color:#F5A820;">over</span> seas
+        </span>
+        <span style="font-size:0.6rem;color:rgba(255,255,255,0.45);letter-spacing:0.18em;text-transform:uppercase;margin-top:1px;">Sour · Lebanon</span>
+      </div>
     </div>
     <ul class="nav-links">
       <li><a href="#services">Services</a></li>
@@ -2122,7 +2228,7 @@
           </div>
           <div class="contact-detail">
             <div class="contact-detail-icon">📞</div>
-            <span>+961 71 136 035</span>
+            <a href="tel:+96171136035" style="color:rgba(255,255,255,0.8);text-decoration:none;">+961 71 136 035</a>
           </div>
           <div class="contact-detail">
             <div class="contact-detail-icon">📱</div>
@@ -2280,6 +2386,14 @@
       </div>
     </div>
   </footer>
+
+  <!-- ─── WHATSAPP FLOAT BUTTON ───────────────────────── -->
+  <a class="wa-float" href="https://wa.me/96171136035?text=Hi%20Ocean%20Over%20Seas!%20I'd%20like%20to%20plan%20a%20trip." target="_blank" aria-label="Chat on WhatsApp">
+    <span class="wa-float-label">Chat with us</span>
+    <div class="wa-float-btn">
+      <svg width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+    </div>
+  </a>
 
   <!-- ─── JS ───────────────────────────────────────────── -->
   <script>
